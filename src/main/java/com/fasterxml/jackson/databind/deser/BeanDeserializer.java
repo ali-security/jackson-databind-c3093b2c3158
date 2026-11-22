@@ -1050,6 +1050,12 @@ public class BeanDeserializer
                 if (ext.handlePropertyValue(p, ctxt, propName, null)) {
                     ;
                 } else {
+                    // [databind#5971]: honor active view for (non-external-type)
+                    // creator properties here too
+                    if ((activeView != null) && !creatorProp.visibleInView(activeView)) {
+                        p.skipChildren();
+                        continue;
+                    }
                     // Last creator property to set?
                     if (buffer.assignParameter(creatorProp,
                             _deserializeWithErrorWrapping(p, ctxt, creatorProp))) {
